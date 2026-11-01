@@ -30,6 +30,15 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Detected version: $VERSION"
 
+      - name: Prepare clean web root for Docker
+        run: |
+          # Create a dedicated clean folder for nginx assets
+          mkdir -p docker-html
+          # Copy everything from inside the extracted version folder directly into docker-html
+          cp -r app-files/pdfcraft-web-*/. docker-html/
+          # Optional: verify what we have
+          ls -la docker-html
+
       - name: Remove zip file so only the extracted folder remains
         run: rm -f app-files/*.zip
 
