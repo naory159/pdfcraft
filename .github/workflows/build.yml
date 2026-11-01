@@ -21,6 +21,15 @@ jobs:
           extract: true                # Automatically unzips the downloaded zip file
           out-file-path: "app-files" # This ensures it creates and extracts into app-files
 
+      - name: Extract version number from downloaded file name
+        id: get_version
+        run: |
+          # Finds the zip file name (e.g. pdfcraft-web-0.16.1.zip) and extracts the version (0.16.1)
+          ZIP_FILE=$(ls app-files/*.zip)
+          VERSION=$(basename "$ZIP_FILE" | sed -E 's/pdfcraft-web-(.*)\.zip/\1/')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
+
       - name: Remove zip file so only the extracted folder remains
         run: rm -f app-files/*.zip
 
@@ -39,4 +48,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: naory159/pdfcraft:latest
+          tags: |
+            naory159/pdfcraft:latest
+            naory159/pdfcraft:${{ steps.get_version.outputs.VERSION }}
