@@ -19,6 +19,7 @@ jobs:
           latest: true
           fileName: "pdfcraft-web-*.zip" # Uses a wildcard so it adapts automatically to new versions (e.g. 0.16.2, 0.17.0)
           extract: true                # Automatically unzips the downloaded zip file
+          out-file-path: "app-files" # This ensures it creates and extracts into app-files
 
       - name: List downloaded files for verification
         run: ls -la app-files
