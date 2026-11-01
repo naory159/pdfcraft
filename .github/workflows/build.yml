@@ -1,15 +1,27 @@
-name: Build and Push Docker Image
+name: Build Web Docker Image from Release
 
 on:
-  push:
-    branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *' # Checks every 6 hours for a new release
+  workflow_dispatch: # Allows manual trigger
 
 jobs:
   build:
-    runs-on: ubuntu-24.04 # Changed from ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout code
+      - name: Checkout local repo (for workflow files)
         uses: actions/checkout@v4
+
+      - name: Download latest Web release from upstream
+        uses: robinraju/release-downloader@v1.10
+        with:
+          repository: "storytold/pdfcraft"
+          latest: true
+          fileName: "*web*" # Downloads the file matching web (adjust if the release asset has a specific name)
+          out-file-path: "app-files"
+
+      - name: List downloaded files for verification
+        run: ls -la app-files
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -20,5 +32,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          context: .
+          file: ./Dockerfile
           push: true
           tags: naory159/pdfcraft:latest
