@@ -21,7 +21,10 @@ jobs:
           extract: true                # Automatically unzips the downloaded zip file
           out-file-path: "app-files" # This ensures it creates and extracts into app-files
 
-      - name: List downloaded files for verification
+      - name: Remove zip file so only the extracted folder remains
+        run: rm -f app-files/*.zip
+
+      - name: List files to verify clean structure
         run: ls -la app-files
 
       - name: Log in to Docker Hub
